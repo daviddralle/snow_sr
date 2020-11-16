@@ -44,12 +44,13 @@ def import_data():
     for i in merged_interpolated_data['point'].unique():
         temp = merged_interpolated_data[merged_interpolated_data['point'] == i]
         temp = temp.interpolate(method='linear', limit_direction='both')
-        merged_interpolated_data[merged_interpolated_data['point'] == i] = temp
+        merged_interpolated_data.loc[merged_interpolated_data['point'] == i] = temp
 
     return data, merged_interpolated_data
 
 
 def deficit_calcs(data, snow_frac):
+    print(data.columns)
     data['ET'] = data['pml_Ec']+data['pml_Es']
     data['No Snow ET'] = data['ET']
     data.loc[data['snow_cover_modis_NDSI_Snow_Cover'] > snow_frac, 'No Snow ET'] = 0
@@ -107,8 +108,8 @@ def multi_site_plotting_fig(data, file_name, points_plotting, titles, start_year
         ax = fig.add_axes([sides[i], row_fracs[0], width_frac, height_frac])
         ylims = et_range
         a = 1
-        ax.plot(plot_data['id'], plot_data['ET'], linewidth=lw_old, color='dimgray',label='Old Method', zorder=1, alpha=a)
-        ax.plot(plot_data['id'], plot_data['No Snow ET'], linewidth=1, color='black', label='New Method', zorder=4, alpha=a)
+        ax.plot(plot_data['id'], plot_data['ET'], linewidth=lw_old, color='dimgray',label='Original Method', zorder=1, alpha=a)
+        ax.plot(plot_data['id'], plot_data['No Snow ET'], linewidth=1, color='black', label='Snow-accounting Method', zorder=4, alpha=a)
         ax.vlines(plot_data.loc[plot_data['No Snow ET'] == 0]['id'], ylims[0], ylims[1],
                   alpha=0.35, lw=0.1, colors='gray', zorder=0)
 
@@ -124,8 +125,8 @@ def multi_site_plotting_fig(data, file_name, points_plotting, titles, start_year
         # adding deficit axis
         ax = fig.add_axes([sides[i], row_fracs[1], width_frac, height_frac], xticklabels=[])
         ylims = d_range
-        ax.plot(plot_data['id'], plot_data['D_old'], linewidth=lw_old, color='dimgray', label='Old Method')
-        ax.plot(plot_data['id'], plot_data['D_new'], linewidth=1, color='black', label='New Method')
+        ax.plot(plot_data['id'], plot_data['D_old'], linewidth=lw_old, color='dimgray', label='Original Method')
+        ax.plot(plot_data['id'], plot_data['D_new'], linewidth=1, color='black', label='Snow-accounting Method')
         ax.vlines(plot_data.loc[plot_data['No Snow ET'] == 0]['id'], ylims[0], ylims[1],
                   alpha=0.5, lw=0.1, colors='gray', zorder=1)
         ax.set_ylim(ylims)
