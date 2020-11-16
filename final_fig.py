@@ -132,7 +132,7 @@ def multi_site_plotting_fig(data, file_name, points_plotting, titles, start_year
         ax.set_ylim(ylims)
 
         if i == 0:
-            ax.set_ylabel('Root zone storage deficit \n (D, mm)')
+            ax.set_ylabel('Root-zone\nstorage deficit \n (D, mm)')
             ax.legend(loc='upper left', prop={'size': 12})
         ax.set_title(titles[i])
 
